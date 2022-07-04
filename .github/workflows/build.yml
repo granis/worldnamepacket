@@ -1,0 +1,38 @@
+# yaml-language-server: $schema=https://json.schemastore.org/github-workflow.json
+name: Build
+on:
+  workflow_call:
+  push:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout project
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: Set version env to use
+        run: echo "VER=$(git describe --tags)" >> $GITHUB_ENV
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+      - name: Build with Gradle
+        uses: gradle/gradle-build-action@v2
+        with:
+          arguments: build
+      - name: Delete unwanted jars
+        run: |
+          rm build/libs/*sources*.jar
+          rm build/libs/*-dev*.jar
+      - name: Release
+        uses: "marvinpinto/action-automatic-releases@latest"
+        with:
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          automatic_release_tag: "latest-${{ github.ref }}"
+          prerelease: true
+          title: "Latest dev build: ${{ env.VER }}"
+          files: |
+            build/libs/worldnamepacket*.jar
