@@ -2,6 +2,7 @@
 name: Build, with maven
 on:
   workflow_call:
+  push:
 
 jobs:
   build:
