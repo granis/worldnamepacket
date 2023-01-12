@@ -28,7 +28,7 @@ public class WorldNamePacket {
          * Hell is other people's code.
          */
         boolean useForgeDiscriminator = true;
-        if (requestBytes.equals(VOXELMAP_FABRIC_REQUEST_PACKET)) {
+        if (requestBytes != null && requestBytes.equals(VOXELMAP_FABRIC_REQUEST_PACKET)) {
             useForgeDiscriminator = false;
         }
 
